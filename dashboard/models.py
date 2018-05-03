@@ -1,7 +1,5 @@
 from django.db import models
-
-from django.db import models
-
+from django.conf import settings
 
 class Bank(models.Model):
     name = models.CharField(max_length=50)
@@ -21,6 +19,7 @@ class PayCheck(models.Model):
     pay_date = models.ForeignKey(PaymentDate, null=False, blank=False, on_delete=models.CASCADE, related_name='pay_date')
     check_number = models.IntegerField(unique=True)
     beneficiary = models.CharField(max_length=100)
-    money_value = models.DecimalField(max_digits=6, decimal_places=2)
+    #money_value = models.DecimalField(max_digits=6, decimal_places=2)
     concept = models.CharField(max_length=200)
     notes = models.CharField(max_length=200)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)

@@ -2,8 +2,11 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.LoginView.as_view(), name="login"),
-    url(r'^index/$', views.IndexView.as_view(), name="index"),
+    url(r'^$', views.login_view, name="login"),
+    url(r'^logout/$', views.logout_view, name="logout"),
+    url(r'^register/$', views.registro_usuario_view, name="register"),
+    url(r'^index/$', views.index_view, name="index"),
+    url(r'^chekes/$', views.chekes_view, name="chekes"),
     url(r'^blank/$', views.BlankView.as_view(), name="blank"),
     url(r'^buttons/$', views.ButtonsView.as_view(), name="buttons"),
     url(r'^flot/$', views.FlotView.as_view(), name="flot"),

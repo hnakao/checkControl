@@ -13,25 +13,40 @@
             {%endif%}
             <div class="login-panel panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Entrar</h3>
+                    <h3 class="panel-title">Registrarse</h3>
                 </div>
                 <div class="panel-body">
-                    <form role="form" method="post" action="{% url 'dashboard:login' %}">
+                    <form role="form" method="post" action="{% url 'dashboard:register' %}">
                         {% csrf_token %}
                         <fieldset>
+
                             <div class="form-group">
-                                <input class="form-control" placeholder="Username" name="username" type="text" autofocus>
+                                {{ form.username}}
                             </div>
                             <div class="form-group">
-                                <input class="form-control" placeholder="Password" name="password" type="password" value="">
+                                {{ form.nombre}}
                             </div>
+                            <div class="form-group">
+                                {{ form.apellidos}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.email}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.password}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.password2}}
+                            </div>
+
                             <div class="checkbox">
                                 <label>
-                                    <input name="remember" type="checkbox" value="Remember Me">Remember Me
+                                    <input name="remember" type="checkbox" value="Acepto la Politica de Usuario">Acepto la Política de Usuario
                                 </label>
+
                             </div>
                             <div class="form-group">
-                                 <h5>Si no tiene una cuenta usted puede <a href="{% url 'dashboard:register' %}">Registrase.</a></h5>
+                                    <h5 style="color:green">Si ya tienes una cuenta usted puede <a href="{% url 'dashboard:login' %}">Entrar</a> al sitio.</h5>
                             </div>
                             <!-- Change this to a button or input when using this as a form -->
                             <button type="submit" class="btn btn-lg btn-success btn-block">Login</button>
