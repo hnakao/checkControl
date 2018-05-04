@@ -94,6 +94,7 @@ class PayCheckForm(forms.Form):
     bank = forms.ModelChoiceField(queryset=Bank.objects.all(), empty_label=None, widget=forms.Select(
         attrs={'class': 'form-control selectpicker', 'style': 'width:480px'}))
 
+
     # photo = forms.ImageField(required=False)
     # ediciones = forms.ModelMultipleChoiceField(queryset=Edicion.objects.all())
 

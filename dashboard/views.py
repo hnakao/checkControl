@@ -192,15 +192,66 @@ def registro_usuario_view(request):
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 @login_required
 def chekes_view(request):
-    if request.method == 'GET':
-        # obtener todos los chekes del usuario logueado
-        chekes = PayCheck.objects.filter(user = request.user.id)
-        form = PayCheckForm()
+    if request.method == 'POST':
+        print("+++++++++++++++++++++++++Post")
+        # Si el method es post, obtenemos los datos del formulario
+        form = PayCheckForm(request.POST, request.FILES)
+        # Comprobamos si el formulario es valido
+        if form.is_valid():
+            print("+++++++++++++++++++++++++Valido")
+            cleaned_data = form.cleaned_data
+            bank = cleaned_data.get('bank')
+
+            nuevoCheke = PayCheck(user = request.user, bank = bank)
+            nuevoCheke.save()
+
+    # obtener todos los chekes del usuario logueado
+    chekes = PayCheck.objects.filter(user = request.user.id)
+    form = PayCheckForm()
+    context = {
+        'chekes' : chekes,
+        'form' : form,
+    }
+    return render(request, 'components/chekes.html', context)
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#  chekes
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+@login_required
+def chekes2_view(request, id):
+    if request.method == 'POST':
+        print("+++++++++++++++++++++++++Post")
+        # Si el method es post, obtenemos los datos del formulario
+        form = PayCheckForm(request.POST, request.FILES)
+        # Comprobamos si el formulario es valido
+        if form.is_valid():
+            print("+++++++++++++++++++++++++Valido")
+            cleaned_data = form.cleaned_data
+            bank = cleaned_data.get('bank')
+
+            editarCheke = PayCheck.objects.get(id = id)
+            editarCheke.bank = bank
+            editarCheke.save()
+
+            chekes = PayCheck.objects.filter(user=request.user.id)
+            form = PayCheckForm()
+            context = {
+                'chekes': chekes,
+                'form': form,
+            }
+            return render(request, 'components/chekes.html', context)
+
+
+    elif request.method == 'GET':
+        cheke = PayCheck.objects.get(id = id)
+        form = PayCheckForm(initial={'bank': cheke.bank})
         context = {
-            'chekes' : chekes,
             'form' : form,
+            'id' : id,
         }
-        return render(request, 'components/chekes.html', context)
+        return render(request, 'components/chekes_modal.html', context)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

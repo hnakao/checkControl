@@ -7,6 +7,7 @@ urlpatterns = [
     url(r'^register/$', views.registro_usuario_view, name="register"),
     url(r'^index/$', views.index_view, name="index"),
     url(r'^chekes/$', views.chekes_view, name="chekes"),
+    url(r'^chekes2/(\d{1,1000})$', views.chekes2_view, name="chekes2"),
     url(r'^blank/$', views.BlankView.as_view(), name="blank"),
     url(r'^buttons/$', views.ButtonsView.as_view(), name="buttons"),
     url(r'^flot/$', views.FlotView.as_view(), name="flot"),

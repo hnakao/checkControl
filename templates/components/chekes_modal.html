@@ -1,0 +1,54 @@
+{% load staticfiles %}
+<!-- Modal Mostrar Pedidos -->
+                                <div class="modal-dialog" style="width:500px">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                            <h4 class="modal-title" id="myModalLabel">Editar Cheke</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <section class="">
+
+
+                <div class="" style="padding:0px">
+                    <div id="mostrarPedido">
+
+                    <form role="form" id="editarCheke" method="post" action="{% url 'dashboard:chekes2' id %}">
+                        {% csrf_token %}
+                        <fieldset>
+
+                            <div class="form-group">
+                                {{ form.bank}}
+                            </div>
+
+                        </fieldset>
+                    </form>
+
+
+    </div>
+
+                </div>
+            </section>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-sm btn-success" onclick="$('#editarCheke').submit();">Actualizar</button>
+                                            <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+                                </div>
+<script>
+$('.selectpicker').selectpicker();
+$('.bootstrap-select').attr('style','width:100%');
+function opencombobox(x){
+if (x.hasClass('btn-group bootstrap-select open')){
+	x.attr('class', 'btn-group bootstrap-select' );
+}
+else if (x.hasClass('btn-group bootstrap-select')){
+	x.attr('class', 'btn-group bootstrap-select open' );
+}
+
+}
+</script>
+<!--Modal-->
+
+

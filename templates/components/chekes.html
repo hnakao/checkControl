@@ -9,13 +9,17 @@
 <!-- DataTables Responsive CSS -->
 <link href="{% static "bower_components/datatables-responsive/css/dataTables.responsive.css" %}" rel="stylesheet">
 
+
+<link rel="stylesheet" href="{% static 'select/' %}css/bootstrap-select.css">
+
+
 {% endblock extrahead %}
 
 
 {% block content %}
  <!-- Modal Mostrar Pedidos -->
                             <div class="modal fade" id="NuevoCheke" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" style="width:820px">
+                                <div class="modal-dialog" style="width:500px">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -25,17 +29,28 @@
                                             <section class="">
 
 
-                <div class="container" style="padding:0px">
-                    <div class="row" id="mostrarPedido">
+                <div class="" style="padding:0px">
+                    <div id="mostrarPedido">
 
-                       {% csrf_token %}
-                        {{ form.as_p }}
+                    <form role="form" id="nuevoCheke" method="post" action="{% url 'dashboard:chekes' %}">
+                        {% csrf_token %}
+                        <fieldset>
 
-                    </div>
+                            <div class="form-group">
+                                {{ form.bank}}
+                            </div>
+
+                        </fieldset>
+                    </form>
+
+
+    </div>
+
                 </div>
             </section>
                                         </div>
                                         <div class="modal-footer">
+                                            <button type="button" class="btn btn-sm btn-success" onclick="$('#nuevoCheke').submit();">Crear</button>
                                             <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cerrar</button>
                                         </div>
                                     </div>
@@ -43,6 +58,14 @@
                             </div>
 
 <!--Modal-->
+
+
+<!-- Modal Editar Cheke -->
+                            <div class="modal fade" id="EditarChekeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+                            </div>
+
+<!--Modal Editar Checke-->
 
 <div class="row">
     <div class="col-lg-12">
@@ -70,6 +93,7 @@
                                 <th>money_value</th>
                                 <th>concept</th>
                                 <th>notes</th>
+                                <th></th>
 
                             </tr>
                         </thead>
@@ -83,6 +107,7 @@
                                 <td>{{item.concept}}</td>
                                 <td>{{item.concept}}</td>
                                 <td>{{item.notes}}</td>
+                                <td><a href="#" onclick="Editar({{item.id}})">editar</a></td>
                             </tr>
                         {%endfor%}
                         </tbody>
@@ -99,156 +124,6 @@
 </div>
 <!-- /.row -->
 
-<!-- /.row -->
-<div class="row">
-    <div class="col-lg-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                Striped Rows
-            </div>
-            <!-- /.panel-heading -->
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Username</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Larry</td>
-                                <td>the Bird</td>
-                                <td>@twitter</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- /.table-responsive -->
-            </div>
-            <!-- /.panel-body -->
-        </div>
-        <!-- /.panel -->
-    </div>
-
-<!-- /.row -->
-<div class="row">
-    <div class="col-lg-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                Hover Rows
-            </div>
-            <!-- /.panel-heading -->
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Username</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Larry</td>
-                                <td>the Bird</td>
-                                <td>@twitter</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- /.table-responsive -->
-            </div>
-            <!-- /.panel-body -->
-        </div>
-        <!-- /.panel -->
-    </div>
-    <!-- /.col-lg-6 -->
-    <div class="col-lg-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                Context Classes
-            </div>
-            <!-- /.panel-heading -->
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Username</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="success">
-                                <td>1</td>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                            </tr>
-                            <tr class="info">
-                                <td>2</td>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                            </tr>
-                            <tr class="warning">
-                                <td>3</td>
-                                <td>Larry</td>
-                                <td>the Bird</td>
-                                <td>@twitter</td>
-                            </tr>
-                            <tr class="danger">
-                                <td>4</td>
-                                <td>John</td>
-                                <td>Smith</td>
-                                <td>@jsmith</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- /.table-responsive -->
-            </div>
-            <!-- /.panel-body -->
-        </div>
-        <!-- /.panel -->
-    </div>
-    <!-- /.col-lg-6 -->
-</div>
-<!-- /.row -->
 
 {% endblock content %}
 
@@ -259,6 +134,8 @@
 <script src="../bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
 <script src="../bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
 
+<script src="{% static 'select/' %}js/bootstrap-select.js" defer></script>
+<script src="{% static 'select/' %}js/jquery/bootstrap.min.js" defer></script>
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
 <script>
 $(document).ready(function() {
@@ -267,5 +144,31 @@ $(document).ready(function() {
     });
 });
 </script>
+
+<script>
+function Editar(id){
+        var ruta = "/chekes2/" + id;
+                var controlador = ruta.toString();
+
+                $.ajax({url: controlador,
+                    type: 'get',
+                    data: $(this).serialize(),
+                    async: true // veamos con true a ver que pasa
+                })
+
+                         .done(function(html) {
+
+                              $("#EditarChekeModal").html(html);
+                              $("#EditarChekeModal").show("fade");
+                              $('#EditarChekeModal').modal('show');
+
+                            })
+                        .fail(function(error) {
+                            console.log("error en mostrar pedido");
+                             //ocultar_loader();
+                        });
+}
+</script>
+
 
 {% endblock extrajs %}
