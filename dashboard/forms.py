@@ -93,6 +93,42 @@ class Recovery_Password_Form(forms.Form):
 class PayCheckForm(forms.Form):
     bank = forms.ModelChoiceField(queryset=Bank.objects.all(), empty_label=None, widget=forms.Select(
         attrs={'class': 'form-control selectpicker', 'style': 'width:480px'}))
+    check_number = forms.IntegerField(required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'check_number','style': 'width:454px'}))
+    beneficiary = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'beneficiary', 'style': 'width:454px'}))
+    concept = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'concept', 'style': 'width:454px'}))
+    notes = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'notes', 'style': 'width:454px'}))
+    emission_date = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control datepicker', 'readonly':'', 'placeholder': 'emission_date', 'style': 'width:454px'}))
+    at_date = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control datepicker', 'readonly':'', 'placeholder': 'at_date', 'style': 'width:454px'}))
+    post_date = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control datepicker', 'readonly':'', 'placeholder': 'post_date', 'style': 'width:454px'}))
+
+    def clean_check_number(self):
+        """Comprueba que no exista un username igual en la db"""
+        check_number = self.cleaned_data['check_number']
+        if PayCheck.objects.filter(check_number=check_number):
+            raise forms.ValidationError('Este número de cheke existe en los registros')
+        return check_number
+
+class PayCheckEditarForm(forms.Form):
+        bank_e = forms.ModelChoiceField(queryset=Bank.objects.all(), empty_label=None, widget=forms.Select(
+            attrs={'class': 'form-control selectpicker', 'style': 'width:480px'}))
+        check_number_e = forms.IntegerField(required=True, widget=forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'check_number', 'style': 'width:454px'}))
+        beneficiary_e = forms.CharField(required=False, widget=forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'beneficiary', 'style': 'width:454px'}))
+        concept_e = forms.CharField(required=False, widget=forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'concept', 'style': 'width:454px'}))
+        notes_e = forms.CharField(required=False, widget=forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'notes', 'style': 'width:454px'}))
+        emission_date_e = forms.CharField(required=True, widget=forms.TextInput(
+            attrs={'class': 'form-control datepicker', 'readonly': '', 'placeholder': 'emission_date',
+                   'style': 'width:454px'}))
+        at_date_e = forms.CharField(required=False, widget=forms.TextInput(
+            attrs={'class': 'form-control datepicker', 'readonly': '', 'placeholder': 'at_date',
+                   'style': 'width:454px'}))
+        post_date_e = forms.CharField(required=False, widget=forms.TextInput(
+            attrs={'class': 'form-control datepicker', 'readonly': '', 'placeholder': 'post_date',
+                   'style': 'width:454px'}))
+
 
 
     # photo = forms.ImageField(required=False)

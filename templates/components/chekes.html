@@ -2,24 +2,29 @@
 {% load staticfiles %}
 
 {% block extrahead %}
+<style>
+    .oculto{
+    display:none
+    }
+</style>
+    <!-- DataTables CSS -->
+    <link href="{% static 'bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css' %}" rel="stylesheet">
 
-<!-- DataTables CSS -->
-<link href="{% static "bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" %}" rel="stylesheet">
-
-<!-- DataTables Responsive CSS -->
-<link href="{% static "bower_components/datatables-responsive/css/dataTables.responsive.css" %}" rel="stylesheet">
+    <!-- DataTables Responsive CSS -->
+    <link href="{% static 'bower_components/datatables-responsive/css/dataTables.responsive.css' %}" rel="stylesheet">
 
 
-<link rel="stylesheet" href="{% static 'select/' %}css/bootstrap-select.css">
+    <link rel="stylesheet" href="{% static 'select/' %}css/bootstrap-select.css">
 
 
 {% endblock extrahead %}
 
 
 {% block content %}
+
  <!-- Modal Mostrar Pedidos -->
                             <div class="modal fade" id="NuevoCheke" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" style="width:500px">
+                                <div class="modal-dialog" style="width:485px">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -31,7 +36,7 @@
 
                 <div class="" style="padding:0px">
                     <div id="mostrarPedido">
-
+                        <div id="mensajes" class="alert alert-warning oculto"></div>
                     <form role="form" id="nuevoCheke" method="post" action="{% url 'dashboard:chekes' %}">
                         {% csrf_token %}
                         <fieldset>
@@ -39,7 +44,27 @@
                             <div class="form-group">
                                 {{ form.bank}}
                             </div>
-
+                            <div class="form-group">
+                                {{ form.check_number}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.beneficiary}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.concept}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.notes}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.emission_date}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.at_date}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.post_date}}
+                            </div>
                         </fieldset>
                     </form>
 
@@ -50,7 +75,7 @@
             </section>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-sm btn-success" onclick="$('#nuevoCheke').submit();">Crear</button>
+                                            <button type="button" class="btn btn-sm btn-success" onclick="EnviarForm()">Crear</button>
                                             <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cerrar</button>
                                         </div>
                                     </div>
@@ -87,12 +112,14 @@
                         <thead>
                             <tr>
                                 <th>bank</th>
-                                <th>pay_date</th>
                                 <th>check_number</th>
                                 <th>beneficiary</th>
                                 <th>money_value</th>
                                 <th>concept</th>
                                 <th>notes</th>
+                                <th>emission_date</th>
+                                <th>at_date</th>
+                                <th>post_date</th>
                                 <th></th>
 
                             </tr>
@@ -101,12 +128,14 @@
                         {%for item in chekes%}
                             <tr class="odd gradeX">
                                 <td>{{item.bank}}</td>
-                                <td>{{item.pay_date}}</td>
                                 <td>{{item.check_number}}</td>
                                 <td>{{item.beneficiary}}</td>
                                 <td>{{item.concept}}</td>
                                 <td>{{item.concept}}</td>
                                 <td>{{item.notes}}</td>
+                                <td>{{item.emission_date}}</td>
+                                <td>{{item.at_date}}</td>
+                                <td>{{item.post_date}}</td>
                                 <td><a href="#" onclick="Editar({{item.id}})">editar</a></td>
                             </tr>
                         {%endfor%}
@@ -124,18 +153,20 @@
 </div>
 <!-- /.row -->
 
-
+<a href="#" onclick="prueba()">dfgdhdfhdh</a>
 {% endblock content %}
 
 
 {% block extrajs %}
+
+
 
 <!-- DataTables JavaScript -->
 <script src="../bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
 <script src="../bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
 
 <script src="{% static 'select/' %}js/bootstrap-select.js" defer></script>
-<script src="{% static 'select/' %}js/jquery/bootstrap.min.js" defer></script>
+
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
 <script>
 $(document).ready(function() {
@@ -169,6 +200,62 @@ function Editar(id){
                         });
 }
 </script>
+<script>
 
+            $('.datepicker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true
+            });
+
+</script>
+<script>
+    function EnviarForm(){
+
+    if(!($('#id_check_number').val())){
+    $('#mensajes').html('Debe de introducir un número de cheque valido.')
+    $('#mensajes').attr('class','alert alert-warning oculto');
+    $('#mensajes').removeClass('oculto');
+    return null;
+    }
+
+    if(!($('#id_emission_date').val())){
+    $('#mensajes').html('Debe de introducir una fecha de emisión valida.')
+    $('#mensajes').attr('class','alert alert-warning oculto');
+    $('#mensajes').removeClass('oculto');
+    return null;
+    }
+
+     //mostrar_loader();
+
+                     var formData = new FormData($('#nuevoCheke')[0]);
+                     $.ajax({url: '{% url 'dashboard:chekes' %}',
+                        type: 'post',
+                        data: $('#nuevoCheke').serialize(),
+                        async: false // veamos con true a ver que pasa
+
+                    })
+
+                            .done(function(json_data) {
+                               $('#mensajes').html(json_data.mensaje)
+                               $('#mensajes').attr('class','alert alert-warning oculto');
+                               if(json_data.bandera){
+                                $('#mensajes').attr('class','alert alert-success oculto');
+                               }
+                                $('#mensajes').removeClass('oculto');
+                                setTimeout("red()", 1000); //tiempo expresado en milisegundos
+                            })
+
+                            .fail(function(error) {
+
+                                console.log('enviar_pedido, error');
+                            });
+    }
+    function red(){
+    location.href = '/chekes/';
+    }
+</script>
 
 {% endblock extrajs %}

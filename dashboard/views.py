@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
 
@@ -8,9 +8,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
-from .forms import RegistroUserForm, PayCheckForm
+from .forms import RegistroUserForm, PayCheckForm, PayCheckEditarForm
 
 from dashboard.models import Bank, PayCheck
+
+import json
+
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # index
@@ -202,9 +205,37 @@ def chekes_view(request):
             cleaned_data = form.cleaned_data
             bank = cleaned_data.get('bank')
 
-            nuevoCheke = PayCheck(user = request.user, bank = bank)
-            nuevoCheke.save()
+            emission_date = cleaned_data.get('emission_date')
+            at_date = cleaned_data.get('at_date')
+            post_date = cleaned_data.get('post_date')
 
+            check_number = cleaned_data.get('check_number')
+            beneficiary = cleaned_data.get('beneficiary')
+            concept = cleaned_data.get('concept')
+            notes = cleaned_data.get('notes')
+
+            nuevoCheke = PayCheck(user = request.user, bank = bank, emission_date = emission_date)
+            nuevoCheke.check_number = check_number
+            nuevoCheke.beneficiary = beneficiary
+            nuevoCheke.concept = concept
+            nuevoCheke.notes = notes
+
+            if at_date != '':
+                nuevoCheke.at_date = at_date
+            if post_date != '':
+                nuevoCheke.post_date = post_date
+            nuevoCheke.save()
+            datos = {
+                'bandera': 1,
+                'mensaje': 'Se ha creado correctamente',
+            }
+            return HttpResponse(json.dumps(datos), content_type='application/json')
+        else:
+            datos = {
+                'bandera': 0,
+                'mensaje': 'Existe un checke con ese número en nuestros registros',
+            }
+            return HttpResponse(json.dumps(datos), content_type='application/json')
     # obtener todos los chekes del usuario logueado
     chekes = PayCheck.objects.filter(user = request.user.id)
     form = PayCheckForm()
@@ -216,6 +247,7 @@ def chekes_view(request):
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #  chekes
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -224,29 +256,79 @@ def chekes2_view(request, id):
     if request.method == 'POST':
         print("+++++++++++++++++++++++++Post")
         # Si el method es post, obtenemos los datos del formulario
-        form = PayCheckForm(request.POST, request.FILES)
+        form = PayCheckEditarForm(request.POST, request.FILES)
         # Comprobamos si el formulario es valido
         if form.is_valid():
             print("+++++++++++++++++++++++++Valido")
             cleaned_data = form.cleaned_data
-            bank = cleaned_data.get('bank')
+            bank = cleaned_data.get('bank_e')
+            chekEliminar = cleaned_data.get('chekEliminar_e')
+
+            emission_date = cleaned_data.get('emission_date_e')
+            at_date = cleaned_data.get('at_date_e')
+            post_date = cleaned_data.get('post_date_e')
+
+            check_number = cleaned_data.get('check_number_e')
+            beneficiary = cleaned_data.get('beneficiary_e')
+            concept = cleaned_data.get('concept_e')
+            notes = cleaned_data.get('notes_e')
+
+
 
             editarCheke = PayCheck.objects.get(id = id)
-            editarCheke.bank = bank
-            editarCheke.save()
 
-            chekes = PayCheck.objects.filter(user=request.user.id)
-            form = PayCheckForm()
-            context = {
-                'chekes': chekes,
-                'form': form,
-            }
-            return render(request, 'components/chekes.html', context)
+            if editarCheke.check_number != int(check_number):
+                if PayCheck.objects.filter(check_number=check_number):
+                    datos = {
+                        'bandera': 0,
+                        'mensaje': 'Existe un checke con ese número en nuestros registros',
+                    }
+                    return HttpResponse(json.dumps(datos), content_type='application/json')
+            else:
+                editarCheke.bank = bank
+                editarCheke.beneficiary = beneficiary
+                editarCheke.concept = concept
+                editarCheke.notes = notes
+
+                editarCheke.emission_date = emission_date
+                if at_date != '':
+                    editarCheke.at_date = at_date
+                if post_date != '':
+                    editarCheke.post_date = post_date
+
+                editarCheke.save()
+
+                datos = {
+                    'bandera': 1,
+                    'mensaje': 'Se ha actualizado correctamente',
+                }
+                return HttpResponse(json.dumps(datos), content_type='application/json')
 
 
+    elif request.method == 'DELETE':
+        print("+++++++++++++++++++++++++eliminar")
+        editarCheke = PayCheck.objects.get(id=id).delete()
+        chekes = PayCheck.objects.filter(user=request.user.id)
+        form = PayCheckForm()
+        context = {
+            'chekes': chekes,
+            'form': form,
+        }
+        return render(request, 'components/chekes.html', context)
     elif request.method == 'GET':
+        print("+++++++++++++++++++++++++get")
         cheke = PayCheck.objects.get(id = id)
-        form = PayCheckForm(initial={'bank': cheke.bank})
+        form = PayCheckEditarForm(initial={
+            'bank_e': cheke.bank,
+            'check_number_e': cheke.check_number,
+            'beneficiary_e': cheke.beneficiary,
+            'concept_e': cheke.concept,
+            'notes_e': cheke.notes,
+            'emission_date_e': cheke.emission_date,
+            'at_date_e': cheke.at_date,
+            'post_date_e': cheke.post_date,
+
+        })
         context = {
             'form' : form,
             'id' : id,
