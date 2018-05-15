@@ -27,7 +27,21 @@
     <!-- Data picker --><!--Date-->
     <link href="{% static 'inspinia-date/' %}css/plugins/datapicker/datepicker3.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="{% static 'select/' %}css/bootstrap-select.css">
 
+
+    <link rel="stylesheet" href="{% static 'flaty/' %}assets/data-tables/DT_bootstrap.css" />
+    <link rel="stylesheet" href="{% static 'flaty/' %}assets/bootstrap/bootstrap.min.css">
+
+
+    <link rel="stylesheet" href="{% static 'alertify/' %}css/alertify.core.css" />
+    <link rel="stylesheet" href="{% static 'alertify/' %}css/alertify.default.css" id="toggleCSS" />
+
+<style>
+    .oculto{
+    display:none
+    }
+</style>
 
     {% block extrahead %}
     {% endblock extrahead %}
@@ -40,6 +54,67 @@
 {% endblock extrastyle %}
 
 <body>
+<!-- Modal Mostrar Pedidos -->
+                            <div class="modal fade" id="NuevoChekeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" style="width:485px">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                            <h4 class="modal-title" id="myModalLabel">Nuevo Cheke</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <section class="">
+
+
+                <div class="" style="padding:0px">
+                    <div id="mostrarPedido">
+                        <div id="mensajes" class="alert alert-warning oculto"></div>
+                    <form role="form" id="nuevoCheke" method="post" action="{% url 'dashboard:chekes' %}">
+                        {% csrf_token %}
+                        <fieldset>
+
+                            <div class="form-group">
+                                {{ form.bank}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.check_number}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.beneficiary}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.concept}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.notes}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.emission_date}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.at_date}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.post_date}}
+                            </div>
+                        </fieldset>
+                    </form>
+
+
+    </div>
+
+                </div>
+            </section>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-sm btn-success" onclick="EnviarForm()">Crear</button>
+                                            <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+<!--Modal-->
     {% block basecontent %}
     {% endblock basecontent %}
 
@@ -64,7 +139,108 @@
     <!-- Tags Input -->
     <script src="{% static 'inspinia-date/' %}js/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js"></script>
 
+    <script src="{% static 'select/' %}js/bootstrap-select.js" defer></script>
+
+    <script src="{% static 'alertify/' %}js/alertify.min.js"></script>
+
+
+
+<script>
+function NuevoCheque(){
+        var ruta = "/cheque_modal/";
+                var controlador = ruta.toString();
+
+                $.ajax({url: controlador,
+                    type: 'get',
+                    data: $(this).serialize(),
+                    async: true // veamos con true a ver que pasa
+                })
+
+                         .done(function(html) {
+
+                              $("#NuevoChekeModal").html(html);
+                              $("#NuevoChekeModal").show("fade");
+                              $('#NuevoChekeModal').modal('show');
+
+                            })
+                        .fail(function(error) {
+                            console.log("error en mostrar pedido");
+                             //ocultar_loader();
+                        });
+}
+</script>
     {% block extrajs %}
     {% endblock extrajs %}
+<script>
+jQuery.fn.exists = function () {
+    return this.length > 0;
+}
+    setInterval(mostrar_mensajes, 10000);
+    function mostrar_mensajes(){
+
+
+    var ruta = "/mostrar_mensajes/";
+
+    $.ajax({url: ruta,
+        type: 'get',
+        async: true // veamos con true a ver que pasa
+    })
+
+     .done(function(json_data) {
+        //alert(json_data.mensajes);
+        if(json_data.prioridad >= 2){
+                if(!$('#alertify').exists() || $('#alertify').hasClass('alertify-hide') ){
+                alertify.set({ buttonReverse: true ,labels : { ok     : "Aceptar"}});
+                alertify.alert(json_data.mensajes, function (e) {
+                        if (e) {
+                        $("#alertify").remove();
+                        eliminar_mensaje(json_data.id);
+                        //acción poner mensaje como leido
+                        }
+                    });
+                }
+        }
+        if(json_data.prioridad == 2){
+                alertify.success(json_data.mensajes);
+
+        }
+
+                            })
+     .fail(function(error) {
+        console.log('mostrar mensajes error');
+                        });
+
+}
+</script>
+
+<script>
+    function eliminar_mensaje(id){
+
+                var ruta = "/eliminar_mensaje/" + id;
+                var controlador = ruta.toString();
+
+                console.log(controlador);
+
+                $.ajax({url: controlador,
+                    type: 'get',
+                    data: $(this).serialize(),
+                    async: true
+                })
+
+                         .done(function(json_data) {
+
+                                //$("#mostrarMensajes").html(html);
+                                //$("#mostrarMensajes").show("fade");
+                            console.log(json_data.mensajes);
+
+
+                            })
+                        .fail(function(error) {
+                            $("#ajax-waiting-loader").hide();
+                            console.log("error en eliminar_mensajes");
+                        });
+
+}
+</script>
 </body>
 </html>

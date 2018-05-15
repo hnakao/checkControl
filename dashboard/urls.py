@@ -8,6 +8,11 @@ urlpatterns = [
     url(r'^index/$', views.index_view, name="index"),
     url(r'^chekes/$', views.chekes_view, name="chekes"),
     url(r'^chekes2/(\d{1,1000})$', views.chekes2_view, name="chekes2"),
+    url(r'^cheque_modal/$', views.cheque_modal_view, name="cheque_modal"),
+    url(r'^filtrar/$', views.filtrar_view, name="filtrar"),
+    url(r'^mostrar_mensajes/$', views.mostrar_mensajes, name="mostrar_mensajes"),
+url(r'^eliminar_mensaje/(\d{1,1000})$', views.eliminar_mensaje, name="eliminar_mensaje"),
+
     url(r'^blank/$', views.BlankView.as_view(), name="blank"),
     url(r'^buttons/$', views.ButtonsView.as_view(), name="buttons"),
     url(r'^flot/$', views.FlotView.as_view(), name="flot"),

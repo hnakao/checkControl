@@ -1,0 +1,169 @@
+{% load staticfiles %}
+    <script src="{% static 'alertify/' %}js/alertify.min.js"></script>
+    <link rel="stylesheet" href="{% static 'alertify/' %}css/alertify.core.css" />
+    <link rel="stylesheet" href="{% static 'alertify/' %}css/alertify.default.css" id="toggleCSS" />
+<!-- Modal Mostrar Pedidos -->
+                                <div class="modal-dialog" style="width:485px">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                            <h4 class="modal-title" id="myModalLabel">Editar Cheque</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <section class="">
+
+
+                <div class="" style="padding:0px">
+                    <div id="mostrarPedidoEditar">
+                    <div id="mensajesEditar" class="alert alert-warning oculto"></div>
+                    <form role="form" id="editarCheke" method="post" action="{% url 'dashboard:chekes2' id %}">
+                        {% csrf_token %}
+                        <input type="text" id="method" name="method" style="display:none">
+                        <fieldset>
+
+                                                        <div class="form-group">
+                                {{ form.bank_e}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.check_number_e}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.beneficiary_e}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.concept_e}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.notes_e}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.emission_date_e}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.at_date_e}}
+                            </div>
+                            <div class="form-group">
+                                {{ form.post_date_e}}
+                            </div>
+
+                        </fieldset>
+                    </form>
+
+
+    </div>
+
+                </div>
+            </section>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-sm btn-success" onclick="EditarForm()">Actualizar</button>
+                                            <button type="button" class="btn btn-sm btn-success" onclick="EliminarCheque()">Eliminar
+                                            <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+                                </div>
+<script>
+$('.selectpicker').selectpicker();
+$('.bootstrap-select').attr('style','width:100%');
+function opencombobox(x){
+console.log('open');
+if (x.hasClass('btn-group bootstrap-select open')){
+	$('#id_bank').attr('class', 'btn-group bootstrap-select' );
+	console.log('has');
+}
+else if (x.hasClass('btn-group bootstrap-select')){
+	$('#id_bank').attr('class', 'btn-group bootstrap-select open' );
+	console.log('no has');
+}
+
+}
+</script>
+<script>
+
+            $('.datepicker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+
+            });
+
+</script>
+<script>
+    $('#id_at_date_e').on('click', function () {  // capture the click
+        $("#id_post_date_e").val('');
+    });
+        $('#id_post_date_e').on('click', function () {  // capture the click
+        $("#id_at_date_e").val('');
+    });
+</script>
+<script>
+    function EliminarCheque(){
+        alertify.set({ buttonReverse: false ,labels : { ok     : "Cancelar",cancel : "Eliminar" }});
+            alertify.confirm("Estas seguro de eliminar este cheque", function (e) {
+                if (e) {
+                    // si confirma relanzar el pedido y elminar el mensaje de la bd
+                //eliminar_mensaje({{mensajes.id}});
+                //relanzar_pedido({{mensajes.pedido_id}});
+                alertify.success("Ha cancelado la opreación");
+
+                } else {
+                    $('#editarCheke').attr('method', 'delete');
+                    //$('#editarCheke').submit();
+                    $("#method").val("delete");
+                    EditarForm()
+                    alertify.error("Eliminado");
+                }
+            });
+    }
+</script>
+<script>
+    function EditarForm(){
+
+    if(!($('#id_check_number_e').val())){
+    $('#mensajesEditar').html('Debe de introducir un número de cheque valido.')
+    $('#mensajesEditar').attr('class','alert alert-warning oculto');
+    $('#mensajesEditar').removeClass('oculto');
+    return null;
+    }
+
+    if(!($('#id_emission_date_e').val())){
+    $('#mensajesEditar').html('Debe de introducir una fecha de emisión valida.')
+    $('#mensajesEditar').attr('class','alert alert-warning oculto');
+    $('#mensajesEditar').removeClass('oculto');
+    return null;
+    }
+
+     //mostrar_loader();
+
+                     var formData = new FormData($('#editarCheke')[0]);
+                     $.ajax({url: '{% url 'dashboard:chekes2' id %}',
+                        type: 'post',
+                        data: $('#editarCheke').serialize(),
+                        async: false // veamos con true a ver que pasa
+
+                    })
+
+                            .done(function(json_data) {
+                               $('#mensajesEditar').html(json_data.mensaje)
+                               $('#mensajesEditar').attr('class','alert alert-warning oculto');
+                               if(json_data.bandera){
+                                $('#mensajesEditar').attr('class','alert alert-success oculto');
+                               }
+                                $('#mensajesEditar').removeClass('oculto');
+                                setTimeout("red()", 1000); //tiempo expresado en milisegundos
+                            })
+
+                            .fail(function(error) {
+
+                                console.log('enviar_pedido, error');
+                            });
+    }
+    function red(){
+    location.href = '/chekes/';
+    }
+</script>
+<!--Modal-->
+
+
