@@ -46,21 +46,21 @@ def job1():
                 check_at_date.estado = 2
                 check_at_date.save()
                 mensaje = Mensajes(user=check_at_date.user, fecha=date.today(), prioridad=2,
-                                   mensaje="Tiene un cheque con 2 dias para su fecha de pago.", leido="no")
+                                   mensaje="Cheque número: %s, con 2 dias para su fecha de pago."%(check_at_date.check_number), leido="no")
                 mensaje.save()
                 print ("+++++++++++++++++++++++++++++++++++++++++++++++")
             elif estado == timedelta(days = 1):
                 check_at_date.estado = 1
                 check_at_date.save()
                 mensaje = Mensajes(user=check_at_date.user, fecha=date.today(), prioridad=3,
-                                   mensaje="Tiene un cheque con 1 dia para su fecha de pago.", leido="no")
+                                   mensaje="Cheque número: %s, con 1 dia para su fecha de pago."%(check_at_date.check_number), leido="no")
                 mensaje.save()
                 print ("+++++++++++++++++++++++++++++++++++++++++++++++")
             elif estado == timedelta(days = 0):
                 check_at_date.estado = 0
                 check_at_date.save()
                 mensaje = Mensajes(user=check_at_date.user, fecha=date.today(), prioridad=4,
-                                   mensaje="Cheque número: %s, para pagar hoy.", leido="no")
+                                   mensaje="Cheque número: %s, para pagar hoy."%(check_at_date.check_number), leido="no")
                 mensaje.save()
                 print ("+++++++++++++++++++++++++++++++++++++++++++++++")
 
