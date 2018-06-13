@@ -33,6 +33,8 @@ def job1():
         chekes_at_date = PayCheck.objects.filter(at_date__gte = date.today(),pagado = 0)
         chekes_post_date = PayCheck.objects.filter(post_date__gte = date.today(),pagado = 0)
 
+        Mensajes.objects.all().delete()
+
         for check_at_date in chekes_at_date:
             estado = check_at_date.at_date - date.today()
             print(estado)
@@ -104,7 +106,7 @@ def job1():
 
 
 def job():
-    schedule.every(0.2).minutes.do(job1)
+    schedule.every(0.5).minutes.do(job1)
     while True:
         schedule.run_pending()
         time.sleep(1)
